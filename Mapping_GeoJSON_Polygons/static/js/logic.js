@@ -1,42 +1,45 @@
 
-let map = L.map('mapid').setView([44, -80], 2);
-// Add GeoJSON data.
-let sanFranAirport =
-{"type":"FeatureCollection","features":[{
-    "type":"Feature",
-    "properties":{
-        "id":"3469",
-        "name":"San Francisco International Airport",
-        "city":"San Francisco",
-        "country":"United States",
-        "faa":"SFO",
-        "icao":"KSFO",
-        "alt":"13",
-        "tz-offset":"-8",
-        "dst":"A",
-        "tz":"America/Los_Angeles"},
-        "geometry":{
-            "type":"Point",
-            "coordinates":[-122.375,37.61899948120117]}}
-]};
-
 // We create the tile layer that will be the background of our map.
 let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY,
-    id: 'navigation-night-v1'
+    id: 'streets-v11'
 
 });
 
-let airportData = "https://raw.githubusercontent.com/TaylorVellios/Mapping_Earthquakes/Mapping_GeoJSON_Points/majorAirports.json";
-let torontoData = "https://raw.githubusercontent.com/TaylorVellios/Mapping_Earthquakes/Mapping_GeoJSON_Linestrings/torontoRoutes.json";
+let satellite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        accessToken: API_KEY,
+        id: 'satellite-streets-v11'
+    
+    });
 
-d3.json(torontoData).then(function(data) {
+let baseMaps = {
+    'Streets': streets,
+    'Satellite Streets': satellite
+}
+
+let torontoHoods = "https://raw.githubusercontent.com/TaylorVellios/Mapping_Earthquakes/Mapping_GeoJSON_Polygons/torontoNeighborhoods.json";
+
+d3.json(torontoHoods).then(function(data) {
   console.log(data);
 // Creating a GeoJSON layer with the retrieved data.
-L.geoJson(data).addTo(map);
+    L.geoJson(data, {
+        onEachFeature: function(feature,layer) {
+            layer.bindPopup(`<h3>${feature.properties.AREA_NAME}</h3>`).addTo(map);
+        },
+        color: 'blue',
+        fillColor: 'yellow',
+        weight: 1
+    });
+});
+let map = L.map('mapid', {
+    center: [43.7, -79.3],
+    zoom: 11,
+    layers: [satellite]
 });
 
-// Then we add our 'graymap' tile layer to the map.
-streets.addTo(map);
+
+L.control.layers(baseMaps).addTo(map);
