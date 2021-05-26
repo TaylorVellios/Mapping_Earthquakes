@@ -39,18 +39,7 @@ attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap
 });
 
 let airportData = "https://raw.githubusercontent.com/TaylorVellios/Mapping_Earthquakes/Mapping_GeoJSON_Points/majorAirports.json";
+let torontoData = "https://raw.githubusercontent.com/<GitHub_name>/Mapping_Earthquakes/main/torontoRoutes.json";
 
-// Grabbing our GeoJSON data.
-d3.json(airportData).then(function(data) {
-  console.log(data);
-// Creating a GeoJSON layer with the retrieved data.
-  data.features.forEach(i => {
-    L.geoJson(i, {
-      pointToLayer: function(what)
-      L.marker(i.geometry.coordinates)
-    })
-  }).addTo(map);
-});
-//fuck this module
 // Then we add our 'graymap' tile layer to the map.
 streets.addTo(map);
