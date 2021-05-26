@@ -1,5 +1,5 @@
 
-let map = L.map('mapid').setView([30, 30], 2);
+let map = L.map('mapid').setView([44, -80], 2);
 // Add GeoJSON data.
 let sanFranAirport =
 {"type":"FeatureCollection","features":[{
@@ -20,15 +20,6 @@ let sanFranAirport =
             "coordinates":[-122.375,37.61899948120117]}}
 ]};
 
-
-L.geoJSON(sanFranAirport, {
-  pointToLayer: function(feature, latlng) {
-    console.log(feature);
-    return L.marker(latlng)
-    .bindPopup(`<h3>${feature.properties.name}</h3><hr><h4>${feature.properties.city},${feature.properties.country}</h4>`)
-  }
-}).addTo(map);
-
 // We create the tile layer that will be the background of our map.
 let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -39,7 +30,13 @@ attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap
 });
 
 let airportData = "https://raw.githubusercontent.com/TaylorVellios/Mapping_Earthquakes/Mapping_GeoJSON_Points/majorAirports.json";
-let torontoData = "https://raw.githubusercontent.com/<GitHub_name>/Mapping_Earthquakes/main/torontoRoutes.json";
+let torontoData = "https://raw.githubusercontent.com/TaylorVellios/Mapping_Earthquakes/Mapping_GeoJSON_Linestrings/torontoRoutes.json";
+
+d3.json(torontoData).then(function(data) {
+  console.log(data);
+// Creating a GeoJSON layer with the retrieved data.
+L.geoJson(data).addTo(map);
+});
 
 // Then we add our 'graymap' tile layer to the map.
 streets.addTo(map);
